@@ -1,0 +1,60 @@
+package nqy.controller;
+
+import java.io.IOException;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import nqy.model.IModel;
+import nqy.model.LmbGetAddAction;
+import nqy.model.LmbGetAllAction;
+import nqy.model.LmbGetDelAction;
+import nqy.model.LmbGetIdAction;
+import nqy.model.LmbGetUpdAction;
+
+/**
+ * Servlet implementation class Lmbcontroller
+ */
+@WebServlet("/Lmbcontroller")
+public class Lmbcontroller extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+   
+	//初始化调用Action方法
+	public void init() {
+		ServletContext application = getServletContext();
+		application.setAttribute("getAllAction", new LmbGetAllAction());
+		application.setAttribute("getAddAction", new LmbGetAddAction());
+		application.setAttribute("getIdAction", new LmbGetIdAction());
+		application.setAttribute("getUpdAction", new LmbGetUpdAction());
+		application.setAttribute("getDelAction", new LmbGetDelAction());
+	}
+   
+    public Lmbcontroller() {
+        super();
+        
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String cmd = request.getParameter("ActionName");
+		IModel model = (IModel) getServletContext().getAttribute(cmd);
+		String url = model.execute(request, response);
+		//请求转发
+		request.getRequestDispatcher(url).forward(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		doGet(request, response);
+	}
+
+}
